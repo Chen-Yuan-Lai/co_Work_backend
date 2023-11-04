@@ -2,7 +2,7 @@ import { Redis } from "ioredis";
 
 let cache: Redis;
 
-if ((process.env.NODE_ENV = "dev")) {
+if (process.env.NODE_ENV === "dev") {
   cache = new Redis({
     port: 6379, // Redis port
     host: process.env.REDIS_HOST,
