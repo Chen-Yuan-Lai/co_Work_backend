@@ -105,7 +105,7 @@ const ProfileSchema = z.object({
 
 async function getFbProfileData(userToken: string) {
   const response = await axios.get(
-    `https://graph.facebook.com/v16.0/me?fields=id,name,email,picture&access_token=${userToken}`
+    `https://graph.facebook.com/v18.0/me?fields=id,name,email,picture&access_token=${userToken}`
   );
   const profile = ProfileSchema.parse(response.data);
   return profile;
@@ -113,6 +113,7 @@ async function getFbProfileData(userToken: string) {
 
 export async function fbLogin(req: Request, res: Response) {
   try {
+    console.log(req.body);
     const { access_token: userToken } = req.body;
     if (!(await isFbTokenValid(userToken))) {
       throw new Error("invalid access_token");
