@@ -85,8 +85,6 @@ export async function signIn(req: Request, res: Response) {
 
 // has some problems
 async function isFbTokenValid(userToken: string) {
-  console.log(userToken);
-
   const response = await axios.get(`
   https://graph.facebook.com/debug_token?
   input_token=${userToken}
@@ -122,12 +120,10 @@ export async function fbLogin(req: Request, res: Response) {
     // if (!(await isFbTokenValid(userToken))) {
     //   throw new Error("invalid access_token");
     // }
-    console.log("hi");
     const profile = await getFbProfileData(userToken);
-    console.log("hii");
+
     const user = await userModel.findUser(profile.email);
 
-    console.log(profile);
     if (!user) {
       const userId = await userModel.createUser(profile.email, profile.name);
       await userProviderModel.createFbProvider(userId, profile.id);
