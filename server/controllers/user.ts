@@ -84,6 +84,12 @@ export async function signIn(req: Request, res: Response) {
 }
 
 async function isFbTokenValid(userToken: string) {
+  console.log(FB_APP_ID, FB_APP_SECRET);
+  console.log(`
+  https://graph.facebook.com/debug_token?
+  input_token=${userToken}
+  &access_token=${FB_APP_ID}|${FB_APP_SECRET}
+`);
   const response = await axios.get(`
     https://graph.facebook.com/debug_token?
     input_token=${userToken}
