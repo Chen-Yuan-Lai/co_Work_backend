@@ -819,7 +819,7 @@
               "recipient": {
                 "type": "object",
                 "properties": {
-                  "title": {
+                  "name": {
                     "type": "string",
                     "example": "Luke"
                   },
@@ -846,7 +846,7 @@
                 "example": [
                   {
                     "id": 201807202157,
-                    "name": "活力花紋長筒牛仔褲",
+                    "title": "活力花紋長筒牛仔褲",
                     "price": 12,
                     "color": {
                       "name": "黑色",
