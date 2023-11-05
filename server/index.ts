@@ -1,5 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import swaggerOutput from "./swagger_output.json" assert { type: "json" };
 import swaggerUi from "swagger-ui-express";
 import productRouter from "./routes/product.js";
@@ -20,6 +21,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
 
 app.use(cookieParser());
 
+app.use(cors());
 app.enable("trust proxy");
 
 // const router = Router();
