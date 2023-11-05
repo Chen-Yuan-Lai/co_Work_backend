@@ -83,13 +83,9 @@ export async function signIn(req: Request, res: Response) {
   }
 }
 
+// has some problems
 async function isFbTokenValid(userToken: string) {
   console.log(userToken);
-  // const response = await axios.get(`
-  //   https://graph.facebook.com/debug_token?
-  //   input_token=${userToken}
-  //   &access_token=${FB_APP_ID}|${FB_APP_SECRET}
-  // `);
 
   const response = await axios.get(`
   https://graph.facebook.com/debug_token?
@@ -113,9 +109,9 @@ const ProfileSchema = z.object({
 async function getFbProfileData(userToken: string) {
   const response = await axios.get(`
   https://graph.facebook.com/v18.0/me?
-  fields=id,name,email,picture&input_token=${userToken}
-  &access_token=${FB_APP_ID}`);
+  fields=id,name,email,picture&access_token=${userToken}`);
   const profile = ProfileSchema.parse(response.data);
+  console.log(profile);
   return profile;
 }
 
@@ -123,9 +119,9 @@ export async function fbLogin(req: Request, res: Response) {
   try {
     console.log(req.body);
     const { access_token: userToken } = req.body;
-    if (!(await isFbTokenValid(userToken))) {
-      throw new Error("invalid access_token");
-    }
+    // if (!(await isFbTokenValid(userToken))) {
+    //   throw new Error("invalid access_token");
+    // }
     console.log("hi");
     const profile = await getFbProfileData(userToken);
     console.log("hii");
