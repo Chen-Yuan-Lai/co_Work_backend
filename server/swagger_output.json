@@ -819,7 +819,7 @@
               "recipient": {
                 "type": "object",
                 "properties": {
-                  "name": {
+                  "title": {
                     "type": "string",
                     "example": "Luke"
                   },
