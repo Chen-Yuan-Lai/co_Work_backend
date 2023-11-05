@@ -166,6 +166,7 @@ export async function fbLogin(req: Request, res: Response) {
         },
       });
   } catch (err) {
+    console.log(err);
     if (err instanceof Error) {
       res.status(400).json({ errors: err.message });
       return;
