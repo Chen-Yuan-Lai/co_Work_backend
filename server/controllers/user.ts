@@ -118,10 +118,12 @@ export async function fbLogin(req: Request, res: Response) {
     if (!(await isFbTokenValid(userToken))) {
       throw new Error("invalid access_token");
     }
+    console.log("hi");
     const profile = await getFbProfileData(userToken);
-
+    console.log("hii");
     const user = await userModel.findUser(profile.email);
 
+    console.log(profile);
     if (!user) {
       const userId = await userModel.createUser(profile.email, profile.name);
       await userProviderModel.createFbProvider(userId, profile.id);
@@ -166,7 +168,6 @@ export async function fbLogin(req: Request, res: Response) {
         },
       });
   } catch (err) {
-    console.log(err);
     if (err instanceof Error) {
       res.status(400).json({ errors: err.message });
       return;
