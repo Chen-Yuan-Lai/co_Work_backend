@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { z } from "zod";
 
 const JWT_KEY = process.env.JWT_KEY || "";
+console.log(process.env.JWT_KEY);
 
 const DecodedSchema = z.object({
   userId: z.number(),
