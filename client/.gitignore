@@ -1,2 +1,12 @@
 *.pem
 .firebase
+node_modules
+/dist
+uploads/*
+!uploads/.gitkeep 
+
+.env
+
+/db/dbVersion.txt
+
+.DS_Store

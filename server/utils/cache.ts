@@ -2,10 +2,11 @@ import { Redis } from "ioredis";
 
 export const cache = new Redis({
   port: 6379, // Redis port
-  host: process.env.REDIS_HOST,
-  username: process.env.REDIS_USER,
-  password: process.env.REDIS_PASSWORD,
-  commandTimeout: 300,
+  //host: `REDISSETUP=redis://default:annann23@127.0.0.1:6379`,
+  host: "localhost",
+  // username: process.env.REDIS_USER,
+  password: "",
+  //commandTimeout: 300,
 });
 
 export async function get(key: string) {
