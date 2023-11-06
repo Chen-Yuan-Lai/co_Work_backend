@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.32, for macos13 (arm64)
+-- MySQL dump 10.13  Distrib 8.0.35, for Linux (x86_64)
 --
--- Host: localhost    Database: stylish
+-- Host: localhost    Database: Stylish_Backend_TypeScript
 -- ------------------------------------------------------
--- Server version	8.0.32
+-- Server version	8.0.35-0ubuntu0.22.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -43,6 +43,35 @@ LOCK TABLES `campaigns` WRITE;
 /*!40000 ALTER TABLE `campaigns` DISABLE KEYS */;
 INSERT INTO `campaigns` VALUES (12,148,'瞬間\r\n在城市的角落\r\n找到失落多時的記憶。\r\n印象《都會故事集》','/assets/201807202140/keyvisual.jpg','2023-05-13 05:03:43','2023-05-13 05:03:43'),(13,153,'永遠\r\n展現自信與專業\r\n無法抵擋的男人魅力。\r\n復古《再一次經典》','/assets/201807242222/keyvisual.jpg','2023-05-13 05:03:43','2023-05-13 05:03:43'),(14,154,'於是\r\n我也想要給你\r\n一個那麼美好的自己。\r\n不朽《與自己和好如初》','/assets/201807242228/keyvisual.jpg','2023-05-13 05:03:43','2023-05-13 05:03:43');
 /*!40000 ALTER TABLE `campaigns` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `histories`
+--
+
+DROP TABLE IF EXISTS `histories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `histories` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint unsigned NOT NULL,
+  `product_id` bigint unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `histories_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `histories_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `histories`
+--
+
+LOCK TABLES `histories` WRITE;
+/*!40000 ALTER TABLE `histories` DISABLE KEYS */;
+/*!40000 ALTER TABLE `histories` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -356,4 +385,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-18 22:30:18
+-- Dump completed on 2023-11-06  0:23:53
