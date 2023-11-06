@@ -506,7 +506,7 @@
         }
       }
     },
-    "/user/browsingHistory": {
+    "api/user/browsingHistory": {
       "get": {
         "tags": ["User"],
         "summary": "get previous browsing histories",
