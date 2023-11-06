@@ -35,7 +35,7 @@ export async function paymentAsync(req: Request, res: Response) {
       res.status(200).send("start generate reports, please wait...");
       return;
     }
-    throw new Error('redis lpush failed');
+    throw new Error("redis lpush failed");
   } catch (err) {
     console.error(err);
     res.status(500).send("oops, something wrong");
