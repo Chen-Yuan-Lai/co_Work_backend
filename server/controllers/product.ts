@@ -4,10 +4,13 @@ import { fileURLToPath } from "url";
 import { nanoid } from "nanoid";
 import { NextFunction, Request, Response } from "express";
 import { fileTypeFromBuffer } from "file-type";
+import { isUserHasRole } from "../models/role.js";
+import verifyJWT from "../utils/verifyJWT.js";
 
 import * as productModel from "../models/product.js";
 import * as productImageModel from "../models/productImage.js";
 import * as productVariantModel from "../models/productVariant.js";
+import * as browsingHistoryModel from "../models/browsingHistory.js";
 
 function mapId<Item extends { id: number }>(item: Item) {
   return item.id;
@@ -77,9 +80,27 @@ export async function getProducts(req: Request, res: Response) {
   }
 }
 
+async function saveBrowsingHistory(req: Request, productId: number) {
+  const tokenInHeaders = req.get("Authorization");
+  const token = tokenInHeaders?.replace("Bearer ", "") || req.cookies.jwtToken;
+  if (!token) return;
+
+  const decoded = await verifyJWT(token);
+  const userId = decoded.userId;
+
+  if (await isUserHasRole(userId, "admin")) return;
+  const id = await browsingHistoryModel.createHistory(productId, userId);
+  return id;
+}
+
 export async function getProduct(req: Request, res: Response) {
   try {
     const id = Number(req.query.id);
+
+    // save browsing history
+    const hisId = await saveBrowsingHistory(req, id);
+    console.log(hisId);
+
     const productsData = await productModel.getProduct(id);
     const productIds = productsData?.map?.(mapId);
     const [images, variants] = await Promise.all([

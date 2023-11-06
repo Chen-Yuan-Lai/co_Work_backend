@@ -121,7 +121,6 @@ export async function fbLogin(req: Request, res: Response) {
     //   throw new Error("invalid access_token");
     // }
     const profile = await getFbProfileData(userToken);
-
     const user = await userModel.findUser(profile.email);
 
     if (!user) {

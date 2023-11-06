@@ -10,7 +10,6 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
       res.status(401).json({ errors: "invalid token" });
       return;
     }
-    console.log(token);
     const decoded = await verifyJWT(token);
     res.locals.userId = decoded.userId;
     next();
