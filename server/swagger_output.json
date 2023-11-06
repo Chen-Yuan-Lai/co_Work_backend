@@ -9,6 +9,10 @@
     {
       "url": "https://handsomelai.shop",
       "description": ""
+    },
+    {
+      "url": "http://localhost",
+      "description": ""
     }
   ],
   "paths": {
@@ -399,7 +403,7 @@
     "/api/user/signin": {
       "post": {
         "tags": ["User"],
-        "summary": "sign in by the user account",
+        "summary": "sign in by facebook",
         "description": "check the user information in the database, and return JWT token for autthentication",
         "responses": {
           "200": {
@@ -456,16 +460,10 @@
                 "type": "object",
                 "properties": {
                   "provider": {
-                    "example": "native"
+                    "example": "facebook"
                   },
-                  "name": {
-                    "example": "Ian"
-                  },
-                  "email": {
-                    "example": "Ian@gmail.com"
-                  },
-                  "password": {
-                    "example": "1234"
+                  "access_token": {
+                    "exxample": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI1LCJpYXQiOjE2OTkyNTgyMjQsImV4cCI6MTY5OTI2MTgyNH0.v4o5kTVx8PbDKcPSpYIe8VdQbYqHSXazhPy-YdV8XpM"
                   }
                 }
               }
@@ -504,6 +502,42 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/user/browsingHistory": {
+      "get": {
+        "tags": ["User"],
+        "summary": "get previous browsing histories",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "return a list of product records",
+        "parameters": [
+          {
+            "name": "paging",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BrowsingHistory"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -856,6 +890,40 @@
                     "qty": 1
                   }
                 ]
+              }
+            }
+          }
+        }
+      },
+      "BrowsingHistory": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "integer",
+            "example": "12023-11-02T10:01:00.000Z"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 201807201824
+              },
+              "category": {
+                "type": "string",
+                "example": "women"
+              },
+              "title": {
+                "type": "string",
+                "example": "前開衩扭結洋裝"
+              },
+              "main_image": {
+                "type": "string",
+                "example": "/assets/201902191247/main.jpg"
+              },
+              "price": {
+                "type": "integer",
+                "example": 1500
               }
             }
           }
