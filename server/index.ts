@@ -1,5 +1,9 @@
-import express, { Router } from "express";
+import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import morgan from "morgan";
+import swaggerOutput from "./swagger_output.json" assert { type: "json" };
+import swaggerUi from "swagger-ui-express";
 import productRouter from "./routes/product.js";
 import userRouter from "./routes/user.js";
 import campaignRouter from "./routes/campaign.js";
@@ -10,19 +14,19 @@ import authenticate from "./middleware/authenticate.js";
 import authorization from "./middleware/authorization.js";
 import rateLimiter from "./middleware/rateLimiter.js";
 import { errorHandler } from "./utils/errorHandler.js";
+// import { any } from "zod";
 
 const app = express();
 const port = 3000;
 
+app.use(morgan("dev"));
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
+
 app.use(cookieParser());
 
-app.enable('trust proxy');
-
-const router = Router();
-
-router.use(function (req, res, next) {
-  next();
-});
+app.use(cors());
+app.enable("trust proxy");
 
 app.use(express.json());
 

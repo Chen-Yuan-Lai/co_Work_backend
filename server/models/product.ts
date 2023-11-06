@@ -1,5 +1,5 @@
 import { ResultSetHeader } from "mysql2";
-import { z } from "zod";
+import { string, z } from "zod";
 import pool from "./databasePool.js";
 
 /*
@@ -30,6 +30,10 @@ const ProductSchema = z.object({
   place: z.string(),
   note: z.string(),
   story: z.string(),
+});
+
+const MainImageSchema = z.object({
+  path: string(),
 });
 
 export const PAGE_COUNT = 6;
@@ -67,6 +71,17 @@ export async function getProduct(id: number) {
   );
   const products = z.array(ProductSchema).parse(results[0]);
   return products;
+}
+export async function getMainImage(id: number) {
+  const result = await pool.query(
+    `
+    SELECT path FROM product_images
+    WHERE product_id = ? AND field_name = 'main_image'
+  `,
+    [id]
+  );
+  const [image] = z.array(MainImageSchema).parse(result[0]);
+  return image.path;
 }
 
 export async function searchProducts({
