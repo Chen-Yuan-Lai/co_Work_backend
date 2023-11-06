@@ -94,6 +94,7 @@ io.on("connection", (socket) => {
 
     type DefaultEventsMap = any;
     const [role, jwtToken]: [string, string] = userIdentify;
+    console.log(jwtToken);
     const roomUsers: RemoteSocket<DefaultEventsMap, any>[] = await io
       .in("admin")
       .fetchSockets();
