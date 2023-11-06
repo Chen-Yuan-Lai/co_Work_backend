@@ -82,7 +82,8 @@ export async function getProducts(req: Request, res: Response) {
 
 async function saveBrowsingHistory(req: Request, productId: number) {
   const tokenInHeaders = req.get("Authorization");
-  const token = tokenInHeaders?.replace("Bearer ", "") || req.cookies.jwtToken;
+  // const token = tokenInHeaders?.replace("Bearer ", "") || req.cookies.jwtToken;
+  const token = tokenInHeaders?.replace("Bearer ", "")n;
   if (!token) return;
 
   const decoded = await verifyJWT(token);
