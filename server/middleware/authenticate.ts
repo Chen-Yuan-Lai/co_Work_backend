@@ -13,6 +13,7 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
       return;
     }
     const decoded = await verifyJWT(token);
+    console.log(decoded);
     res.locals.userId = decoded.userId;
     next();
   } catch (err) {
