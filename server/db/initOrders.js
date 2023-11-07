@@ -17,10 +17,9 @@ const conn = await mysql.createConnection({
 
 const [users] = await conn.query("SELECT id, name FROM users LIMIT 5");
 
+console.log(users);
 const userIds = users.map(({ id }) => id);
 const generateOrderNumber = customAlphabet("1234567890abcdef", 8);
-
-console.log(users);
 
 let ordersCount = 10000;
 
@@ -78,7 +77,7 @@ try {
     ]
   );
   conn.query("COMMIT");
-  console.log('====== results ======', results);
+  console.log("====== results ======", results);
 } catch (err) {
   console.error(err);
   conn.query("ROLLBACK");

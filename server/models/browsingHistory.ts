@@ -1,6 +1,5 @@
 import pool from "./databasePool.js";
 import { ResultSetHeader } from "mysql2";
-import { OkPacket, RowDataPacket } from "mysql2/promise";
 import { z } from "zod";
 
 import { PAGE_COUNT } from "./product.js";
@@ -26,15 +25,14 @@ export async function getBrowsingHistory({
   userId: number;
 }) {
   try {
-    console.log(userId);
     const results = await pool.query(
       `
     SELECT * FROM histories 
     WHERE user_id = ? 
-    ORDER BY created_at
-    LIMIT ? OFFSET ?
+    ORDER BY created_at DESC
+    LIMIT 20
     `,
-      [userId, PAGE_COUNT, paging * PAGE_COUNT]
+      [userId]
     );
 
     const histories = z.array(browsingHistorySchema).parse(results[0]);

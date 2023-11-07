@@ -1,7 +1,5 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { object, string, z } from "zod";
-
-import { isProductExist } from "../models/product.js";
 import { isUserHasRole } from "../models/role.js";
 
 import * as productModel from "../models/product.js";
