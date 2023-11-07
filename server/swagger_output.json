@@ -618,7 +618,7 @@
         }
       }
     },
-    "/api/user/BrowsingHistory": {
+    "/api/user/browsingHistory": {
       "get": {
         "tags": ["User"],
         "summary": "get previous browsing products records",
