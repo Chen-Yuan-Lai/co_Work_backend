@@ -241,11 +241,8 @@ io.on("connection", (socket) => {
       socket.to("admin").emit("talk", sendMessage);
 
       //save message
-      let date: Date = new Date();
-      let dateToISO: String = date.toISOString();
-
       const saveMessage = new Chat({
-        sendTime: dateToISO,
+        sendTime: new Date(),
         userType: role,
         userId: usersJwtID,
         content: message,
@@ -260,13 +257,8 @@ io.on("connection", (socket) => {
       usersJwtID = "";
     } else if (room.has(users)) {
       //save message
-      let date: Date = new Date();
-      let dateToISO: String = date.toISOString();
-      console.log(dateToISO);
-      console.log(typeof dateToISO);
-
       const saveMessage = new Chat({
-        sendTime: dateToISO,
+        sendTime: new Date(),
         userType: role,
         userId: usersJwtID,
         content: message,
