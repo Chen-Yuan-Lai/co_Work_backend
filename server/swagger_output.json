@@ -636,8 +636,11 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/BrowsingHistory"
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BrowsingHistory"
+                      }
                     }
                   }
                 }
