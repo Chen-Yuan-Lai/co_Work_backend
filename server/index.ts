@@ -110,7 +110,7 @@ io.on("connection", (socket) => {
     } catch (err) {
       jwterr = err;
     }
-
+    console.log(decoded, jwterr);
     console.log(roomUsers.length, role, socket.id);
     console.log(room);
     console.log("My users:  " + users, "My admins:  " + admins);
