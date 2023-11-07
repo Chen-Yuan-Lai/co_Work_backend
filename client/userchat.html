@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Socket.IO chat</title>
+  </head>
+  <body>
+    <form id="form2" action="">
+      <button type="button" onclick="startConversation()">
+        Start Conversation
+      </button>
+    </form>
+    <br />
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" />
+      <button onclick="sendMessage()">Send</button>
+    </form>
+
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+      const socket = io(); // URL of your server
+      const form = document.getElementById("form");
+      const form2 = document.getElementById("form2");
+
+      const input = document.getElementById("input");
+      const messages = document.getElementById("messages");
+
+      form2.addEventListener("submit", (e) => {
+        e.preventDefault(); // Prevent the default form submission
+        startConversation();
+      });
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault(); // Prevent the default form submission
+        sendMessage();
+      });
+
+      socket.on("connect", () => {
+        console.log(`You connect with id ${socket.id}`); // Connection started
+      });
+
+      function startConversation() {
+        let userIdentify = [
+          "user",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI1LCJpYXQiOjE2OTkyNTgyMjQsImV4cCI6MTY5OTI2MTgyNH0.v4o5kTVx8PbDKcPSpYIe8VdQbYqHSXazhPy-YdV8XpM",
+        ];
+        socket.emit("user-check", userIdentify);
+      }
+
+      function sendMessage() {
+        let userIdentify = [
+          "user",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI1LCJpYXQiOjE2OTkyNTgyMjQsImV4cCI6MTY5OTI2MTgyNH0.v4o5kTVx8PbDKcPSpYIe8VdQbYqHSXazhPy-YdV8XpM",
+        ];
+        if (input.value) {
+          socket.emit("talk", input.value, userIdentify);
+          input.value = "";
+        }
+      }
+
+      socket.on("user-check", (msg) => {
+        console.log(msg);
+      });
+      socket.on("talk", (msg) => {
+        console.log("talk:   ", msg);
+      });
+
+      // socket.on("user-close", (msg) => {
+      //   console.log(msg);
+      // });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Socket.IO chat</title>
+  </head>
+  <body>
+    <form id="form2" action="">
+      <button type="button" onclick="startConversation()">
+        Start Conversation
+      </button>
+    </form>
+    <br />
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" />
+      <button onclick="sendMessage()">Send</button>
+    </form>
+    <br />
+    <form id="form3" action="">
+      <button type="button" onclick="endConversation()">
+        End User's Conversation
+      </button>
+    </form>
+
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+      const socket = io(); // URL of your server
+      const form = document.getElementById("form");
+      const form2 = document.getElementById("form2");
+      const form3 = document.getElementById("form3");
+      const input = document.getElementById("input");
+      const messages = document.getElementById("messages");
+
+      socket.on("connect", () => {
+        console.log(`You connect with id ${socket.id}`); // Connection started
+      });
+
+      form2.addEventListener("submit", (e) => {
+        e.preventDefault();
+        startConversation();
+      });
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        sendMessage();
+      });
+
+      form3.addEventListener("submit", (e) => {
+        e.preventDefault();
+        endConversation();
+      });
+
+      function startConversation() {
+        let userIdentify = [
+          "admin",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI1LCJpYXQiOjE2OTkyNTgyMjQsImV4cCI6MTY5OTI2MTgyNH0.v4o5kTVx8PbDKcPSpYIe8VdQbYqHSXazhPy-YdV8XpM",
+        ];
+        socket.emit("user-check", userIdentify);
+      }
+
+      function endConversation() {
+        socket.emit("user-close");
+      }
+
+      function sendMessage() {
+        let userIdentify = [
+          "admin",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI1LCJpYXQiOjE2OTkyNTgyMjQsImV4cCI6MTY5OTI2MTgyNH0.v4o5kTVx8PbDKcPSpYIe8VdQbYqHSXazhPy-YdV8XpM",
+        ];
+        if (input.value) {
+          socket.emit("talk", input.value, userIdentify);
+          input.value = "";
+        }
+      }
+      socket.on("user-check", (msg) => {
+        console.log(msg);
+      });
+      socket.on("talk", (msg) => {
+        console.log("talk:    " + msg);
+      });
+    </script>
+  </body>
+</html>

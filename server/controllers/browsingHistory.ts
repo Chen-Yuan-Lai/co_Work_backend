@@ -28,7 +28,9 @@ export async function getBrowsingHistory(req: Request, res: Response) {
       userId,
     });
 
-    const historyPromises = histories.map(async (el) => {
+    let historyPromises: any = [];
+
+    historyPromises = histories?.map(async (el) => {
       const [product] = await productModel.getProduct(el.product_id);
       const image = await productModel.getMainImage(el.product_id);
 
