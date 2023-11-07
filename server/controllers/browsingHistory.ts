@@ -1,7 +1,5 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { object, string, z } from "zod";
-
-import { isProductExist } from "../models/product.js";
 import { isUserHasRole } from "../models/role.js";
 
 import * as productModel from "../models/product.js";
@@ -48,7 +46,7 @@ export async function getBrowsingHistory(req: Request, res: Response) {
       };
     });
 
-    const historyData = await Promise.all(historyPromises);
+    let historyData = await Promise.all(historyPromises);
 
     res.status(200).json({
       records: historyData,

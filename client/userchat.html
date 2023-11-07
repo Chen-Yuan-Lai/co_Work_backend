@@ -42,18 +42,12 @@
       });
 
       function startConversation() {
-        let userIdentify = [
-          "user",
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI1LCJpYXQiOjE2OTkyNTgyMjQsImV4cCI6MTY5OTI2MTgyNH0.v4o5kTVx8PbDKcPSpYIe8VdQbYqHSXazhPy-YdV8XpM",
-        ];
+        let userIdentify = ["user", localStorage.getItem("Authorization")];
         socket.emit("user-check", userIdentify);
       }
 
       function sendMessage() {
-        let userIdentify = [
-          "user",
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI1LCJpYXQiOjE2OTkyNTgyMjQsImV4cCI6MTY5OTI2MTgyNH0.v4o5kTVx8PbDKcPSpYIe8VdQbYqHSXazhPy-YdV8XpM",
-        ];
+        let userIdentify = ["user", localStorage.getItem("Authorization")];
         if (input.value) {
           socket.emit("talk", input.value, userIdentify);
           input.value = "";

@@ -85,20 +85,22 @@ const io = new Server(server, {
 });
 let admins: string = "";
 let users: string = "";
+let usersJwtID: any = "";
 
 io.on("connection", (socket) => {
   console.log("Socket-connect");
   socket.on("user-check", async (userIdentify) => {
-    // const [role, jwtToken] = userIdentify;
-    // const roomUsers = await io.in("admin").fetchSockets();
-
-    type DefaultEventsMap = any;
+    //1. get room, roomUsers, role, jwtToken
     const [role, jwtToken]: [string, string] = userIdentify;
     console.log(jwtToken);
+
+    type DefaultEventsMap = any;
     const roomUsers: RemoteSocket<DefaultEventsMap, any>[] = await io
       .in("admin")
       .fetchSockets();
     const room: Set<string> | undefined = io.sockets.adapter.rooms.get("admin");
+
+    //2. handle jwt error
     let jwterr: string | unknown = "";
 
     let decoded: {
@@ -109,15 +111,19 @@ io.on("connection", (socket) => {
     } catch (err) {
       jwterr = err;
     }
+
+    let userId: number | undefined = decoded?.userId;
+    console.log("user's jwt ID: ", usersJwtID);
     console.log(decoded, jwterr);
     console.log(roomUsers.length, role, socket.id);
-    console.log(`${role} connected.`);
     console.log(room);
-    console.log(users, admins);
+    console.log("My users:  " + users, "My admins:  " + admins);
 
-    // repeat connection
+    // 3. logic start
     if (jwterr) {
       socket.emit("user-check", ["Disconnect", "JWT token error "]);
+
+      //check user repeat connect
     } else if (users == socket.id) {
       socket.emit("user-check", ["Connect", "You are already connected."]);
     } else if (admins == socket.id) {
@@ -133,6 +139,7 @@ io.on("connection", (socket) => {
     } else if (roomUsers.length == 1 && !room?.has(users) && role == "user") {
       socket.join("admin");
       users = socket.id;
+      usersJwtID = userId;
       socket.emit("user-check", ["Connect", "user connect"]);
     } else if (roomUsers.length == 1 && room?.has(users) && role == "user") {
       socket.emit("user-check", ["Disconnect", "All admin is busy."]);
@@ -170,16 +177,17 @@ io.on("connection", (socket) => {
     console.log(room);
     if (users == socket.id) {
       users = "";
-    } else {
+      usersJwtID = "";
+    } else if (admins == socket.id) {
       admins = "";
     }
   });
 
   socket.on("talk", async (message, userIdentify) => {
     const room = io.sockets.adapter.rooms.get("admin");
-    const [role, jwtToken] = userIdentify;
-    console.log(room);
+    const [role, jwtToken]: [string, string] = userIdentify;
 
+    //1. handle jwt error
     let jwterr: string | unknown = "";
 
     let decoded: {
@@ -191,6 +199,10 @@ io.on("connection", (socket) => {
       jwterr = err;
     }
 
+    if (room) {
+      console.log(room);
+    }
+
     if (jwterr) {
       socket.emit("user-check", ["Disconnect", "JWT token error "]);
     } else if (!room) {
@@ -200,14 +212,17 @@ io.on("connection", (socket) => {
       ]);
     } else if (room.has(admins) && room.has(users)) {
       console.log("User and admin start talking.");
+
       socket.join("admin");
 
       let userId: number | undefined = decoded?.userId;
-      console.log("My jwt user id:" + userId);
+      console.log("user's jwt ID: ", usersJwtID);
 
       let isUser: boolean = false;
       if (role == "user") {
         isUser = true;
+      } else if (role == "admin") {
+        isUser = false;
       }
 
       let sendMessage = {
@@ -218,21 +233,13 @@ io.on("connection", (socket) => {
 
       socket.to("admin").emit("talk", sendMessage);
 
-      let singleMessage = {
-        sendTime: new Date(),
-        userType: role,
-        userId: userId,
-        content: message,
-      };
-      // console.log(singleMessage);
-
+      //save message
       const saveMessage = new Chat({
         sendTime: new Date(),
         userType: role,
-        userId: userId,
+        userId: usersJwtID,
         content: message,
       });
-
       await saveMessage.save();
     } else if (room.has(admins)) {
       socket.emit("user-check", [
@@ -240,14 +247,24 @@ io.on("connection", (socket) => {
         "admin still connect, user disconnect",
       ]);
       users = "";
+      usersJwtID = "";
     } else if (room.has(users)) {
-      type DefaultEventsMap = /*unresolved*/ any;
+      //save message
+      const saveMessage = new Chat({
+        sendTime: new Date(),
+        userType: role,
+        userId: usersJwtID,
+        content: message,
+      });
+      await saveMessage.save();
+      type DefaultEventsMap = any;
       const userSocket:
         | Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
         | undefined = io.sockets.sockets.get(users);
       userSocket?.emit("user-check", ["Disconnect", "Admin left the room"]);
       userSocket?.leave("admin");
       users = "";
+      usersJwtID = "";
       admins = "";
     }
   });
@@ -263,6 +280,7 @@ io.on("connection", (socket) => {
       ]);
       userSocket.leave("admin");
       users = "";
+      usersJwtID = "";
     }
   });
 });

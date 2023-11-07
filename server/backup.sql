@@ -281,7 +281,7 @@ CREATE TABLE `roles` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -290,7 +290,38 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
+INSERT INTO `roles` VALUES (3,'admin');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stores`
+--
+
+DROP TABLE IF EXISTS `stores`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `stores` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `lat` varchar(255) NOT NULL,
+  `lng` varchar(255) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `phone` varchar(255) NOT NULL,
+  `open_time` varchar(255) NOT NULL,
+  `close_time` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stores`
+--
+
+LOCK TABLES `stores` WRITE;
+/*!40000 ALTER TABLE `stores` DISABLE KEYS */;
+INSERT INTO `stores` VALUES (6,'25.045749558028554','121.51477021384437','台北市中正區館前路12號','(02)2331-5806','11:00','22:00','台北車站館前店'),(7,'25.044023639710836','121.50711269664501','台北市萬華區漢中街52號','(02)2331-4828','11:00','11:00','西門店'),(8,'25.006886285840675','121.47485399849825','新北市中和區中山路三段122號','(02)3234-7604','11:00','22:00','Global Mall  新北中和店'),(9,'24.96886585202906','121.2493434678071','桃園市中壢區中華路一段699號','(03)461-2137','11:00','22:00','中壢中華路店'),(10,'25.02143530092362','121.55607186631653','台北市信義區和平東路三段319號','(03)2331-0857','09:00','09:30','皮卡丘旗艦店');
+/*!40000 ALTER TABLE `stores` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -310,7 +341,7 @@ CREATE TABLE `user_providers` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `user_providers_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -319,6 +350,7 @@ CREATE TABLE `user_providers` (
 
 LOCK TABLES `user_providers` WRITE;
 /*!40000 ALTER TABLE `user_providers` DISABLE KEYS */;
+INSERT INTO `user_providers` VALUES (15,24,'native','$argon2id$v=19$m=65536,t=3,p=4$6RlwT/JFS19wE1fwj6JdxA$yoCRwGu9eu/9TvyKTenMms0qvIfGZWd1Fy/uPLY+WvU','2023-11-06 17:37:28','2023-11-06 17:37:28');
 /*!40000 ALTER TABLE `user_providers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -345,6 +377,7 @@ CREATE TABLE `user_role` (
 
 LOCK TABLES `user_role` WRITE;
 /*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
+INSERT INTO `user_role` VALUES (24,3);
 /*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -364,7 +397,7 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -373,6 +406,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (24,'a186235@gmail.com','admin',NULL,'2023-11-06 17:37:28','2023-11-06 17:37:28');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -385,4 +419,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-06  0:23:53
+-- Dump completed on 2023-11-07  1:40:01

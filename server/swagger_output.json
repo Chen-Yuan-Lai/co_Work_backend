@@ -241,6 +241,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "isUser": {
+                      "example": "true"
+                    },
                     "data": {
                       "$ref": "#/components/schemas/Product"
                     }
@@ -281,6 +284,62 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/products/shops": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "get stocks from physical shops",
+        "description": "return an variant array which have shop information and stocks ",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "color_code": {
+                            "example": "#FFFFFF"
+                          },
+                          "size": {
+                            "example": "S"
+                          },
+                          "shopStocks": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Shop"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid keyword or page"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -506,23 +565,67 @@
         }
       }
     },
-    "api/user/browsingHistory": {
+    "/api/user/chat/history": {
+      "post": {
+        "tags": ["User"],
+        "summary": "User chat history from chat room",
+        "description": "Return a list of chat history based on user ID",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "sendTime": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "isUser": {
+                          "type": "boolean"
+                        },
+                        "content": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request: Please provide correct JWT token."
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jwtToken": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/browsingHistory": {
       "get": {
         "tags": ["User"],
-        "summary": "get previous browsing histories",
+        "summary": "get previous browsing products records",
+        "description": "return 20 newest records per request",
         "security": [
           {
             "BearerAuth": []
-          }
-        ],
-        "description": "return a list of product records",
-        "parameters": [
-          {
-            "name": "paging",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -531,13 +634,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BrowsingHistory"
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/BrowsingHistory"
+                    }
                   }
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -926,6 +1034,35 @@
                 "example": 1500
               }
             }
+          }
+        }
+      },
+      "Shop": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "example": 6
+          },
+          "name": {
+            "example": "台北車站館前店"
+          },
+          "lat": {
+            "example": "25.045749558028554"
+          },
+          "address": {
+            "example": "121.51477021384437"
+          },
+          "phone": {
+            "example": "(02)2331-5806"
+          },
+          "open_time": {
+            "example": "11:00"
+          },
+          "close_time": {
+            "example": "22:00"
+          },
+          "stock": {
+            "example": 7
           }
         }
       },
