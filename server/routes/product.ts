@@ -8,6 +8,7 @@ import {
   checkFileType,
   saveImagesToDisk,
 } from "../controllers/product.js";
+import { getStores } from "../controllers/physicalStore.js";
 import { uploadToBuffer } from "../middleware/multer.js";
 import * as validator from "../middleware/validator.js";
 
@@ -27,6 +28,10 @@ router
 router
   .route("/products/details")
   .get(query("id").not().isEmpty().trim(), validator.handleResult, getProduct);
+
+router
+  .route("/products/shops")
+  .get(query("id").not().isEmpty().trim(), validator.handleResult, getStores);
 
 router
   .route("/products/:category")

@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import jwt from "jsonwebtoken";
 import { fileURLToPath } from "url";
 import { nanoid } from "nanoid";
 import { NextFunction, Request, Response } from "express";
@@ -81,18 +82,21 @@ export async function getProducts(req: Request, res: Response) {
 }
 
 async function saveBrowsingHistory(req: Request, productId: number) {
-  const tokenInHeaders = req.get("Authorization");
-  console.log(tokenInHeaders);
-  // const token = tokenInHeaders?.replace("Bearer ", "") || req.cookies.jwtToken;
-  const token = tokenInHeaders?.replace("Bearer ", "");
-  if (!token) return;
+  try {
+    const tokenInHeaders = req.get("Authorization");
+    console.log(tokenInHeaders);
+    const token = tokenInHeaders?.replace("Bearer ", "");
+    if (!token) return;
 
-  const decoded = await verifyJWT(token);
-  const userId = decoded.userId;
+    const decoded = await verifyJWT(token);
+    const userId = decoded.userId;
 
-  if (await isUserHasRole(userId, "admin")) return;
-  const id = await browsingHistoryModel.createHistory(productId, userId);
-  return id;
+    if (await isUserHasRole(userId, "admin")) return;
+    await browsingHistoryModel.createHistory(productId, userId);
+    return true;
+  } catch (err) {
+    return false;
+  }
 }
 
 export async function getProduct(req: Request, res: Response) {
@@ -100,8 +104,7 @@ export async function getProduct(req: Request, res: Response) {
     const id = Number(req.query.id);
 
     // save browsing history
-    const hisId = await saveBrowsingHistory(req, id);
-    console.log("hi");
+    const isUser = await saveBrowsingHistory(req, id);
 
     const productsData = await productModel.getProduct(id);
     const productIds = productsData?.map?.(mapId);
@@ -115,6 +118,7 @@ export async function getProduct(req: Request, res: Response) {
       .map(mapImages(imagesObj))
       .map(mapVariants(variantsObj));
     res.json({
+      isUser,
       data: products[0],
     });
   } catch (err) {
