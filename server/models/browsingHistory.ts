@@ -55,3 +55,5 @@ export async function createHistory(productId: number, userId: number) {
   }
   throw new Error("create history failed");
 }
+
+export async function deleteBrowsingHistory(userId: number) {}

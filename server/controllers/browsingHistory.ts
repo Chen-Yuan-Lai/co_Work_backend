@@ -59,3 +59,8 @@ export async function getBrowsingHistory(req: Request, res: Response) {
     return res.status(500).json({ errors: "get histories failed" });
   }
 }
+
+
+export async function deleteBrowsingHistory(req: Request, res: Response) {
+  
+}
