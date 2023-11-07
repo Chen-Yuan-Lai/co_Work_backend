@@ -1,25 +1,30 @@
-// import { ResultSetHeader } from "mysql2";
-// import { string, z } from "zod";
-// import pool from "./databasePool.js";
+// import mongoose, { now } from "mongoose";
 
-// export const PAGE_COUNT = 6;
-
-// const PreorderSchema = z.object({
-//   preorder_id: z.number(),
-//   product_id: z.number(),
-//   target: z.number(),
-//   accmulate: z.number(),
+// const preorderSchema = new mongoose.Schema({
+//   id: { type: Number },
+//   category: { type: String },
+//   title: { type: String },
+//   desciption: { type: String },
+//   price: { type: Number },
+//   texture: { type: String },
+//   wash: { type: String },
+//   place: { type: String },
+//   note: { type: String },
+//   story: { type: String },
+//   target: { type: Number },
+//   accumulate: { type: Number },
+//   colors: [
+//     {
+//       code: { type: String },
+//       name: { type: String },
+//     },
+//   ],
+//   sizes: [{ type: String }],
+//   main_image: { type: String },
+//   images: [{ type: String }],
 // });
 
-// export async function getPreorders({ paging = 0 }: { paging: number }) {
-//   const results = await pool.query(
-//     `
-//     SELECT * FROM preorder
-//     ORDER BY id DESC
-//     LIMIT ? OFFSET ?
-//   `,
-//     [PAGE_COUNT, paging * PAGE_COUNT]
-//   );
-//   const products = z.array(PreorderSchema).parse(results[0]);
-//   return products;
-// }
+// // create a model
+// const Preorder = mongoose.model("Preorder", preorderSchema); //singular + lower case start
+
+// export default Preorder;

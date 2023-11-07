@@ -85,6 +85,7 @@ const io = new Server(server, {
 });
 let admins: string = "";
 let users: string = "";
+let usersJwtID: any = "";
 
 io.on("connection", (socket) => {
   console.log("Socket-connect");
@@ -110,6 +111,9 @@ io.on("connection", (socket) => {
     } catch (err) {
       jwterr = err;
     }
+
+    let userId: number | undefined = decoded?.userId;
+    console.log("user's jwt ID: ", usersJwtID);
     console.log(decoded, jwterr);
     console.log(roomUsers.length, role, socket.id);
     console.log(room);
@@ -135,6 +139,7 @@ io.on("connection", (socket) => {
     } else if (roomUsers.length == 1 && !room?.has(users) && role == "user") {
       socket.join("admin");
       users = socket.id;
+      usersJwtID = userId;
       socket.emit("user-check", ["Connect", "user connect"]);
     } else if (roomUsers.length == 1 && room?.has(users) && role == "user") {
       socket.emit("user-check", ["Disconnect", "All admin is busy."]);
@@ -172,6 +177,7 @@ io.on("connection", (socket) => {
     console.log(room);
     if (users == socket.id) {
       users = "";
+      usersJwtID = "";
     } else if (admins == socket.id) {
       admins = "";
     }
@@ -210,7 +216,7 @@ io.on("connection", (socket) => {
       socket.join("admin");
 
       let userId: number | undefined = decoded?.userId;
-      console.log("My jwt user id:" + userId);
+      console.log("user's jwt ID: ", usersJwtID);
 
       let isUser: boolean = false;
       if (role == "user") {
@@ -227,13 +233,13 @@ io.on("connection", (socket) => {
 
       socket.to("admin").emit("talk", sendMessage);
 
+      //save message
       const saveMessage = new Chat({
         sendTime: new Date(),
         userType: role,
-        userId: userId,
+        userId: usersJwtID,
         content: message,
       });
-
       await saveMessage.save();
     } else if (room.has(admins)) {
       socket.emit("user-check", [
@@ -241,7 +247,16 @@ io.on("connection", (socket) => {
         "admin still connect, user disconnect",
       ]);
       users = "";
+      usersJwtID = "";
     } else if (room.has(users)) {
+      //save message
+      const saveMessage = new Chat({
+        sendTime: new Date(),
+        userType: role,
+        userId: usersJwtID,
+        content: message,
+      });
+      await saveMessage.save();
       type DefaultEventsMap = any;
       const userSocket:
         | Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
@@ -249,6 +264,7 @@ io.on("connection", (socket) => {
       userSocket?.emit("user-check", ["Disconnect", "Admin left the room"]);
       userSocket?.leave("admin");
       users = "";
+      usersJwtID = "";
       admins = "";
     }
   });
@@ -264,6 +280,7 @@ io.on("connection", (socket) => {
       ]);
       userSocket.leave("admin");
       users = "";
+      usersJwtID = "";
     }
   });
 });

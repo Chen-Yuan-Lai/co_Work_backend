@@ -1,23 +1,13 @@
 // import express from "express";
 // const router = express.Router();
 // const app = express();
-// import { getPreorders } from "../models/preorder.js";
+// import Preorder from "../models/preorder.js";
 
 // router.use(express.json());
 // router.use(express.urlencoded({ extended: true }));
 
-// //middleware
-// router.use(function (req, res, next) {
-//   console.log("A request go to apiroute");
-//   next();
-// });
-
 // router.post("/preorder", async (req, res) => {
 //   console.log("A request came to preorder API");
-//   let paging: number = req.body.paging;
-
-//   let data = await getPreorders(paging);
-//   console.log(data);
 
 //   //   interface OneResponse {
 //   //     sendTime: Date | null | undefined;
