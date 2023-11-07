@@ -56,4 +56,16 @@ export async function createHistory(productId: number, userId: number) {
   throw new Error("create history failed");
 }
 
-export async function deleteBrowsingHistory(userId: number) {}
+export async function deleteBrowsingHistory(userId: number) {
+  const results = await pool.query(
+    `
+    DELETE from histories
+    WHERE user_id = ?
+  `,
+    [userId]
+  );
+  if (Array.isArray(results) && instanceOfSetHeader(results[0])) {
+    return results[0];
+  }
+  throw new Error("delete history failed");
+}
