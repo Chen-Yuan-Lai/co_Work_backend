@@ -143,7 +143,11 @@ io.on("connection", (socket) => {
       socket.emit("user-check", ["Connect", "user connect"]);
       socket
         .to("admin")
-        .emit("user-check", ["Connect", "user connect", jwtToken]);
+        .emit("user-check", [
+          "Notice admin user connect",
+          "user connect",
+          jwtToken,
+        ]);
     } else if (roomUsers.length == 1 && room?.has(users) && role == "user") {
       socket.emit("user-check", ["Disconnect", "All admin is busy."]);
 
