@@ -508,6 +508,61 @@
         }
       }
     },
+
+    "/api/user/chat/history": {
+      "post": {
+        "tags": ["User"],
+        "summary": "User chat history from chat room",
+        "description": "Return a list of chat history based on user ID",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "sendTime": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "isUser": {
+                          "type": "boolean"
+                        },
+                        "content": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request: Please provide correct JWT token."
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jwtToken": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
     "/api/marketing/campaigns": {
       "get": {
         "tags": ["Marketing"],

@@ -89,15 +89,17 @@ let users: string = "";
 io.on("connection", (socket) => {
   console.log("Socket-connect");
   socket.on("user-check", async (userIdentify) => {
-    // const [role, jwtToken] = userIdentify;
-    // const roomUsers = await io.in("admin").fetchSockets();
+    //1. get room, roomUsers, role, jwtToken
+    const [role, jwtToken]: [string, string] = userIdentify;
+    console.log(jwtToken);
 
     type DefaultEventsMap = any;
-    const [role, jwtToken]: [string, string] = userIdentify;
     const roomUsers: RemoteSocket<DefaultEventsMap, any>[] = await io
       .in("admin")
       .fetchSockets();
     const room: Set<string> | undefined = io.sockets.adapter.rooms.get("admin");
+
+    //2. handle jwt error
     let jwterr: string | unknown = "";
 
     let decoded: {
@@ -110,13 +112,14 @@ io.on("connection", (socket) => {
     }
 
     console.log(roomUsers.length, role, socket.id);
-    console.log(`${role} connected.`);
     console.log(room);
-    console.log(users, admins);
+    console.log("My users:  " + users, "My admins:  " + admins);
 
-    // repeat connection
+    // 3. logic start
     if (jwterr) {
       socket.emit("user-check", ["Disconnect", "JWT token error "]);
+
+      //check user repeat connect
     } else if (users == socket.id) {
       socket.emit("user-check", ["Connect", "You are already connected."]);
     } else if (admins == socket.id) {
@@ -169,16 +172,16 @@ io.on("connection", (socket) => {
     console.log(room);
     if (users == socket.id) {
       users = "";
-    } else {
+    } else if (admins == socket.id) {
       admins = "";
     }
   });
 
   socket.on("talk", async (message, userIdentify) => {
     const room = io.sockets.adapter.rooms.get("admin");
-    const [role, jwtToken] = userIdentify;
-    console.log(room);
+    const [role, jwtToken]: [string, string] = userIdentify;
 
+    //1. handle jwt error
     let jwterr: string | unknown = "";
 
     let decoded: {
@@ -190,6 +193,10 @@ io.on("connection", (socket) => {
       jwterr = err;
     }
 
+    if (room) {
+      console.log(room);
+    }
+
     if (jwterr) {
       socket.emit("user-check", ["Disconnect", "JWT token error "]);
     } else if (!room) {
@@ -199,6 +206,7 @@ io.on("connection", (socket) => {
       ]);
     } else if (room.has(admins) && room.has(users)) {
       console.log("User and admin start talking.");
+
       socket.join("admin");
 
       let userId: number | undefined = decoded?.userId;
@@ -207,6 +215,8 @@ io.on("connection", (socket) => {
       let isUser: boolean = false;
       if (role == "user") {
         isUser = true;
+      } else if (role == "admin") {
+        isUser = false;
       }
 
       let sendMessage = {
@@ -216,14 +226,6 @@ io.on("connection", (socket) => {
       };
 
       socket.to("admin").emit("talk", sendMessage);
-
-      let singleMessage = {
-        sendTime: new Date(),
-        userType: role,
-        userId: userId,
-        content: message,
-      };
-      // console.log(singleMessage);
 
       const saveMessage = new Chat({
         sendTime: new Date(),
@@ -240,7 +242,7 @@ io.on("connection", (socket) => {
       ]);
       users = "";
     } else if (room.has(users)) {
-      type DefaultEventsMap = /*unresolved*/ any;
+      type DefaultEventsMap = any;
       const userSocket:
         | Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
         | undefined = io.sockets.sockets.get(users);

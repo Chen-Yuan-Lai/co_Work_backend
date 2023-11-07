@@ -8,3 +8,5 @@ uploads/*
 /db/dbVersion.txt
 
 .DS_Store
+
+*.pem
