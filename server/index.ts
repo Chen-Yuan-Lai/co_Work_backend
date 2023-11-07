@@ -10,6 +10,7 @@ import campaignRouter from "./routes/campaign.js";
 import orderRouter from "./routes/order.js";
 import reportRouter from "./routes/report.js";
 import chatRouter from "./routes/chathistory.js";
+import preorderRouter from "./routes/preorder.js";
 import branch from "./middleware/branch.js";
 import authenticate from "./middleware/authenticate.js";
 import authorization from "./middleware/authorization.js";
@@ -57,6 +58,7 @@ app.use("/api", rateLimiter, [
   orderRouter,
   reportRouter,
   chatRouter,
+  preorderRouter,
 ]);
 
 app.use(
