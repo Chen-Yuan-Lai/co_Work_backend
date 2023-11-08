@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 
-import * as productModel from "../models/product.js";
 import * as productVariantModel from "../models/productVariant.js";
 import * as physicalStoreModel from "../models/physicalStore.js";
 
@@ -11,15 +10,15 @@ export async function getStores(req: Request, res: Response) {
     const variants = await productVariantModel.getProductVariants([id]);
     const stores = await physicalStoreModel.getStores();
 
-    const shopStocks = stores?.map((s) => {
-      const randomNum: Number = Math.floor(Math.random() * 10 + 1);
-
-      return {
-        ...s,
-        stock: randomNum,
-      };
-    });
     const variantsData = variants?.map((v) => {
+      const shopStocks = stores?.map((s) => {
+        const randomNum: Number = Math.floor(Math.random() * 10 + 1);
+
+        return {
+          ...s,
+          stock: randomNum,
+        };
+      });
       return {
         color_code: v.color,
         size: v.size,
