@@ -125,7 +125,7 @@ async function setProduct({
     [
       variantsInfo.map((data) => {
         const { color, colorName, size, stock } = data;
-        return [productId, color, colorName, size, stock];
+        return [productId, color, colorName, size, 1000];
       }),
     ]
   );
