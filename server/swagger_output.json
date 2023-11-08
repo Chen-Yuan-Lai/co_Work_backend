@@ -381,6 +381,18 @@
         }
       }
     },
+    "api/new/products/preorder": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "get preorder info",
+        "description": "get preorder info",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/user/signup": {
       "post": {
         "tags": ["User"],

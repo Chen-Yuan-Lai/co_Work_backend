@@ -16,6 +16,7 @@ import {
   updateVariantsStock,
 } from "../models/productVariant.js";
 import { ValidationError } from "../utils/errorHandler.js";
+import Preorder from "../models/preorder.js";
 
 dotenv.config();
 
@@ -75,6 +76,7 @@ async function payByPrime({
       order_number: orderNumber,
     },
   });
+
   if (result.data.status !== 0) {
     throw new Error(result.data.msg);
   }
@@ -103,12 +105,50 @@ interface VariantMap {
 
 async function checkProducts(inputList: ProductInput[]): Promise<Product[]> {
   const productIds = inputList.map(({ id }) => Number(id));
+  let preorders: any = await Preorder.find(
+    {
+      id: {
+        $in: productIds,
+      },
+    },
+    { id: 1, _id: 0, title: 1, price: 1 }
+  );
+  let preorderVariants: any = await Preorder.find(
+    {
+      id: {
+        $in: productIds,
+      },
+    },
+    { _id: 0, id: 1, colors: 1, sizes: 1 }
+  );
+
+  preorderVariants = preorderVariants.map((variant: any) => ({
+    id: 0,
+    product_id: variant.id,
+    color: `#${variant.colors[0].code}`,
+    color_name: variant.colors[0].name,
+    size: variant.sizes[0],
+    stock: 1000,
+  }));
+
   const [productsFromServer, variantsFromServer] = await Promise.all([
     getProductsByIds(productIds),
     getProductVariants(productIds),
   ]);
+  preorders.forEach((preorder: any) => {
+    productsFromServer.push(preorder);
+  });
+
+  preorderVariants.forEach((preorderVariant: any) => {
+    variantsFromServer.push(preorderVariant);
+  });
+
+  // console.log(productsFromServer);
+  // console.log(variantsFromServer);
+
   const productsFromServerMap = keyBy(productsFromServer, "id");
   const variantsFromServerMap = groupBy(variantsFromServer, "product_id");
+
   const checkProductExit = (product: ProductInput) => {
     const serverProduct = productsFromServerMap[product.id];
     if (!serverProduct)
@@ -156,6 +196,7 @@ async function checkProducts(inputList: ProductInput[]): Promise<Product[]> {
     if (!targetVariant) {
       throw new ValidationError(`invalid product variants: ${product.id}`);
     }
+
     return {
       ...product,
       variantId: targetVariant.id,
@@ -177,6 +218,19 @@ async function placeOrder({
   connection: Connection;
 }) {
   const { shipping, payment, subtotal, freight, total } = orderInfo;
+
+  //remove preorder items
+  let preorders: any = await Preorder.find({}, { id: 1, _id: 0, price: 1 });
+
+  for (let i = 0; i < products.length; i++) {
+    for (let j = 0; j < preorders.length; j++) {
+      if (products[i].id == preorders[j].id) {
+        products.splice(i, 1);
+        i--;
+      }
+    }
+  }
+
   connection.query("BEGIN");
   try {
     const { orderId, orderNumber } = await orderModel.createOrder(
@@ -221,6 +275,17 @@ async function confirmOrder({
 }) {
   try {
     connection.query("BEGIN");
+    //remove preorder items
+    let preorders: any = await Preorder.find({}, { id: 1, _id: 0, price: 1 });
+
+    for (let i = 0; i < products.length; i++) {
+      for (let j = 0; j < preorders.length; j++) {
+        if (products[i].id == preorders[j].id) {
+          products.splice(i, 1);
+          i--;
+        }
+      }
+    }
 
     const variantIds = products.map(({ variantId }) => variantId);
     const variants = await getVariantsStockWithLock(variantIds, connection);
@@ -271,7 +336,7 @@ export async function checkout(req: Request, res: Response) {
     const { shipping, payment, subtotal, freight, total, recipient, list } =
       order;
 
-    const products = await checkProducts(list);
+    let products = await checkProducts(list);
 
     const { orderId, orderNumber } = await placeOrder({
       userId,
@@ -296,6 +361,24 @@ export async function checkout(req: Request, res: Response) {
       products,
       connection,
     });
+
+    //update preorder stock
+    products = await checkProducts(list);
+    let preorders: any = await Preorder.find({}, { id: 1, _id: 0, price: 1 });
+
+    for (let i = 0; i < products.length; i++) {
+      for (let j = 0; j < preorders.length; j++) {
+        if (products[i].id == preorders[j].id) {
+          const filter = { id: preorders[j].id };
+          const increaseAmount = preorders[j].price * products[i].qty;
+
+          console.log(filter);
+          console.log(increaseAmount);
+          const update = { $inc: { accumulate: increaseAmount } };
+          await Preorder.findOneAndUpdate(filter, update);
+        }
+      }
+    }
 
     res.status(200).json({ data: { number: orderNumber } });
   } catch (err) {
