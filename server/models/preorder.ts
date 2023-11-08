@@ -4,7 +4,7 @@ const preorderSchema = new mongoose.Schema({
   id: { type: Number },
   category: { type: String },
   title: { type: String },
-  desciption: { type: String },
+  description: { type: String },
   price: { type: Number },
   texture: { type: String },
   wash: { type: String },

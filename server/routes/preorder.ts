@@ -10,14 +10,11 @@ router.get("/new/products/preorder", async (req, res) => {
   console.log("A request came to preorder API");
   let preOrderData = await Preorder.find({});
 
-  //   const initialCreatePreorder = new Preorder();
-  //   await initialCreatePreorder.save();
-
   interface OneResponse {
     id: any;
     category: any;
     title: any;
-    desciption: any;
+    description: any;
     price: any;
     texture: any;
     wash: any;
@@ -72,7 +69,7 @@ router.get("/new/products/preorder", async (req, res) => {
       id: onePreOrder.id,
       category: onePreOrder.category,
       title: onePreOrder.title,
-      desciption: onePreOrder.desciption,
+      description: onePreOrder.description,
       price: onePreOrder.price,
       texture: onePreOrder.texture,
       wash: onePreOrder.wash,
@@ -89,6 +86,9 @@ router.get("/new/products/preorder", async (req, res) => {
     };
     response.data.push(oneResponse);
   });
+
+  // const initialCreatePreorder = new Preorder();
+  // await initialCreatePreorder.save();
 
   res.status(200).send(response);
 });
