@@ -218,9 +218,14 @@ async function placeOrder({
   connection: Connection;
 }) {
   const { shipping, payment, subtotal, freight, total } = orderInfo;
+  console.log(products[0]);
+  console.log("before remove preorder : " + JSON.stringify(products));
 
   //remove preorder items
   let preorders: any = await Preorder.find({}, { id: 1, _id: 0, price: 1 });
+  console.log("before remove preorder : " + JSON.stringify(preorders));
+
+  console.log("preorders" + preorders);
 
   for (let i = 0; i < products.length; i++) {
     for (let j = 0; j < preorders.length; j++) {
@@ -330,6 +335,7 @@ async function confirmOrder({
 
 export async function checkout(req: Request, res: Response) {
   const connection = await pool.getConnection();
+
   try {
     const userId = res.locals.userId;
     const { prime, order } = req.body;
@@ -337,50 +343,72 @@ export async function checkout(req: Request, res: Response) {
       order;
 
     let products = await checkProducts(list);
-
-    const { orderId, orderNumber } = await placeOrder({
-      userId,
-      orderInfo: {
-        shipping,
-        payment,
-        subtotal,
-        freight,
-        total,
-      },
-      recipient,
-      products,
-      connection,
-    });
-
-    await confirmOrder({
-      orderId,
-      orderNumber,
-      prime,
-      amount: total,
-      recipient,
-      products,
-      connection,
-    });
-
-    //update preorder stock
-    products = await checkProducts(list);
     let preorders: any = await Preorder.find({}, { id: 1, _id: 0, price: 1 });
+    const productIds = products.map((product) => product.id);
+    const preorderIds = preorders.map((preorder: any) => preorder.id);
+    const allProductIdsExistInPreorders = productIds.every((productId) =>
+      preorderIds.includes(productId)
+    );
 
-    for (let i = 0; i < products.length; i++) {
-      for (let j = 0; j < preorders.length; j++) {
-        if (products[i].id == preorders[j].id) {
-          const filter = { id: preorders[j].id };
-          const increaseAmount = preorders[j].price * products[i].qty;
+    if (allProductIdsExistInPreorders) {
+      products = await checkProducts(list);
+      let preorders: any = await Preorder.find({}, { id: 1, _id: 0, price: 1 });
 
-          console.log(filter);
-          console.log(increaseAmount);
-          const update = { $inc: { accumulate: increaseAmount } };
-          await Preorder.findOneAndUpdate(filter, update);
+      for (let i = 0; i < products.length; i++) {
+        for (let j = 0; j < preorders.length; j++) {
+          if (products[i].id == preorders[j].id) {
+            const filter = { id: preorders[j].id };
+            const increaseAmount = preorders[j].price * products[i].qty;
+            console.log(filter);
+            console.log(increaseAmount);
+            const update = { $inc: { accumulate: increaseAmount } };
+            await Preorder.findOneAndUpdate(filter, update);
+          }
         }
       }
-    }
 
-    res.status(200).json({ data: { number: orderNumber } });
+      res.status(200).json({ data: { number: "1efa3" } });
+    } else {
+      const { orderId, orderNumber } = await placeOrder({
+        userId,
+        orderInfo: {
+          shipping,
+          payment,
+          subtotal,
+          freight,
+          total,
+        },
+        recipient,
+        products,
+        connection,
+      });
+
+      await confirmOrder({
+        orderId,
+        orderNumber,
+        prime,
+        amount: total,
+        recipient,
+        products,
+        connection,
+      });
+
+      products = await checkProducts(list);
+      let preorders: any = await Preorder.find({}, { id: 1, _id: 0, price: 1 });
+
+      for (let i = 0; i < products.length; i++) {
+        for (let j = 0; j < preorders.length; j++) {
+          if (products[i].id == preorders[j].id) {
+            const filter = { id: preorders[j].id };
+            const increaseAmount = preorders[j].price * products[i].qty;
+            const update = { $inc: { accumulate: increaseAmount } };
+            await Preorder.findOneAndUpdate(filter, update);
+          }
+        }
+      }
+
+      res.status(200).json({ data: { number: orderNumber } });
+    }
   } catch (err) {
     if (err instanceof ValidationError) {
       res.status(400).json({ errors: err.message });
