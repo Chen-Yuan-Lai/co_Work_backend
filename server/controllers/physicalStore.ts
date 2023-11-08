@@ -19,7 +19,6 @@ export async function getStores(req: Request, res: Response) {
         stock: randomNum,
       };
     });
-    console.log(shopStocks);
     const variantsData = variants?.map((v) => {
       return {
         color_code: v.color,

@@ -1,7 +1,10 @@
 import { Router, Response, Request } from "express";
 import { body } from "express-validator";
 import { signUp, signIn, fbLogin, getProfile } from "../controllers/user.js";
-import { getBrowsingHistory } from "../controllers/browsingHistory.js";
+import {
+  getBrowsingHistory,
+  deleteBrowsingHistory,
+} from "../controllers/browsingHistory.js";
 import { PROVIDER } from "../models/userProvider.js";
 import * as validator from "../middleware/validator.js";
 import branch from "../middleware/branch.js";
@@ -40,5 +43,8 @@ router.route("/user/signin").post([
 
 router.route("/user/profile").get([authenticate, getProfile]);
 router.route("/user/browsingHistory").get([authenticate, getBrowsingHistory]);
+router
+  .route("/user/browsingHistory")
+  .delete([authenticate, deleteBrowsingHistory]);
 
 export default router;
