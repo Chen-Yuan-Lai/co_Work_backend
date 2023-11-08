@@ -295,7 +295,7 @@
         "description": "return an variant array which have shop information and stocks ",
         "parameters": [
           {
-            "name": "product_id",
+            "name": "id",
             "in": "query",
             "schema": {
               "type": "string"
