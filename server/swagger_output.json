@@ -292,7 +292,7 @@
       "get": {
         "tags": ["Product"],
         "summary": "get stocks from physical shops",
-        "description": "return an variant array which have shop information and stocks ",
+        "description": "return an variant array which have shop information and stocks (random stocks number)",
         "parameters": [
           {
             "name": "id",
