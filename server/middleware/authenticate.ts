@@ -7,11 +7,13 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
     const token =
       // tokenInHeaders?.replace("Bearer ", "") || req.cookies.jwtToken;
       tokenInHeaders?.replace("Bearer ", "");
+    console.log(token);
     if (!token) {
       res.status(401).json({ errors: "invalid token" });
       return;
     }
     const decoded = await verifyJWT(token);
+    console.log(decoded);
     res.locals.userId = decoded.userId;
     next();
   } catch (err) {

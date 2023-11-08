@@ -141,6 +141,13 @@ io.on("connection", (socket) => {
       users = socket.id;
       usersJwtID = userId;
       socket.emit("user-check", ["Connect", "user connect"]);
+      socket
+        .to("admin")
+        .emit("user-check", [
+          "Notice admin user connect",
+          "user connect",
+          jwtToken,
+        ]);
     } else if (roomUsers.length == 1 && room?.has(users) && role == "user") {
       socket.emit("user-check", ["Disconnect", "All admin is busy."]);
 
@@ -257,6 +264,7 @@ io.on("connection", (socket) => {
         content: message,
       });
       await saveMessage.save();
+
       type DefaultEventsMap = any;
       const userSocket:
         | Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>

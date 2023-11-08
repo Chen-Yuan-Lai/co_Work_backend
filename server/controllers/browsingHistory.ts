@@ -59,3 +59,24 @@ export async function getBrowsingHistory(req: Request, res: Response) {
     return res.status(500).json({ errors: "get histories failed" });
   }
 }
+
+export async function deleteBrowsingHistory(req: Request, res: Response) {
+  try {
+    const userId = res.locals.userId;
+
+    if (await isUserHasRole(userId, "admin"))
+      throw new Error("Not has user role");
+
+    await browsingHistoryModel.deleteBrowsingHistory(userId);
+
+    res.status(200).json({
+      records: [],
+    });
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(400).json({ errors: err.message });
+      return;
+    }
+    return res.status(500).json({ errors: "something wrong" });
+  }
+}

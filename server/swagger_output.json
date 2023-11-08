@@ -636,13 +636,49 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/BrowsingHistory"
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BrowsingHistory"
+                      }
                     }
                   }
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["User"],
+        "summary": "delete browsing products records",
+        "description": "delete all the records",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "records": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JWT token error"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1015,7 +1051,7 @@
             "properties": {
               "id": {
                 "type": "integer",
-                "example": 201807201824
+                "example": 161
               },
               "category": {
                 "type": "string",
@@ -1041,13 +1077,16 @@
         "type": "object",
         "properties": {
           "id": {
-            "example": 6
+            "example": 161
           },
           "name": {
             "example": "台北車站館前店"
           },
           "lat": {
             "example": "25.045749558028554"
+          },
+          "lng": {
+            "example": "121.51477021384437"
           },
           "address": {
             "example": "121.51477021384437"
